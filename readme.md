@@ -7,3 +7,17 @@ Expose your OVOS device camera via ZMQ for remote processing via [zmq2mjpeg](htt
 - Home Assistant - provides ip camera + sensors
 
 ![img.png](img.png)
+
+## Configuration
+
+```json
+{
+  "PHAL": {
+    "ovos-PHAL-zmqamera": {
+      "host": "tcp://0.0.0.0:5555",
+      "device_name": "my_phal_device",
+      "time_between_restarts": 5
+    }
+  }
+}
+```
