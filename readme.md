@@ -1,4 +1,4 @@
-# PHAL ZMQacmera
+# PHAL ZMQamera
 
 Expose your OVOS device camera via ZMQ for remote processing via [zmq2mjpeg](https://github.com/JarbasAl/zmq2mjpeg)
 
