@@ -31,6 +31,7 @@ class CameraSender:
 
         picam = VideoStream().start()
 
+        self.running = True
         try:
             while self.running:  # send images as stream until Ctrl-C
                 image = picam.read()
