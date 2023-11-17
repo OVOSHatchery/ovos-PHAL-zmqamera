@@ -1,16 +1,18 @@
 from time import sleep
 
 import imagezmq
+import simplejpeg
 import zmq  # needed because we will be using zmq socket options & exceptions
 from imutils.video import VideoStream
 
 
 class CameraSender:
-    def __init__(self, host, name, time_between_restarts=5):
+    def __init__(self, host, name, time_between_restarts=5, jpeg_quality=95):
         self.running = False
         self.host = host
         self.name = name  # some unique device name here
         self.time_between_restarts = time_between_restarts  # number of seconds to sleep between sender restarts
+        self.jpeg_quality = jpeg_quality  # 0 to 100, higher is better quality
 
     @staticmethod
     def sender_start(connect_to=None):
@@ -35,8 +37,10 @@ class CameraSender:
         try:
             while self.running:  # send images as stream until Ctrl-C
                 image = picam.read()
+                jpg_buffer = simplejpeg.encode_jpeg(image, quality=self.jpeg_quality,
+                                                    colorspace='BGR')
                 try:
-                    reply_from_mac = sender.send_image(self.name, image)
+                    reply_from_mac = sender.send_jpg(self.name, jpg_buffer)
                 except (zmq.ZMQError, zmq.ContextTerminated, zmq.Again):
                     if 'sender' in locals():
                         print('Closing ImageSender.')
