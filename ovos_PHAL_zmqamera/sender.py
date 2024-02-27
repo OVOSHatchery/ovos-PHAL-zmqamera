@@ -7,12 +7,17 @@ from imutils.video import VideoStream
 
 
 class CameraSender:
-    def __init__(self, host, name, time_between_restarts=5, jpeg_quality=95):
+    def __init__(self, host, name, time_between_restarts=5, jpeg_quality=95, camera_index=0):
         self.running = False
         self.host = host
         self.name = name  # some unique device name here
         self.time_between_restarts = time_between_restarts  # number of seconds to sleep between sender restarts
         self.jpeg_quality = jpeg_quality  # 0 to 100, higher is better quality
+        self.last_frame = None
+        self.camera_index = camera_index
+
+    def get(self):
+        return self.last_frame
 
     @staticmethod
     def sender_start(connect_to=None):
@@ -31,12 +36,13 @@ class CameraSender:
     def run(self):
         sender = self.sender_start(self.host)
 
-        picam = VideoStream().start()
+        picam = VideoStream(self.camera_index).start()
 
         self.running = True
         try:
             while self.running:  # send images as stream until Ctrl-C
                 image = picam.read()
+                self.last_frame = image
                 jpg_buffer = simplejpeg.encode_jpeg(image, quality=self.jpeg_quality,
                                                     colorspace='BGR')
                 try:
